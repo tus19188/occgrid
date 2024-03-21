@@ -1,0 +1,26 @@
+<launch>
+  <arg name="frame_id" default="map" 
+       doc="Name of the coordinate frame associated with the map"/>
+  <arg name="resolution" default="0.25"
+       doc="Size of the cells in the occupancy grid in meters"/>
+  <arg name="filename" default="$(find create_occ_grid)/config/map0.yaml"
+       doc="Name of the file containing the environment description"/>
+
+  <node pkg="create_occ_grid" name="occ_grid_node" type="occ_grid_node.py"
+        output="screen">
+    <param name="frame_id" value="$(arg frame_id)"/>
+    <param name="resolution" value="$(arg resolution)"/>
+    <rosparam command="load" file="$(arg filename)"/>
+  </node>
+  
+  <node pkg="create_occ_grid" name="block_vis" type="block_vis.py"
+        output="screen">
+    <param name="alpha" value="0.5"/>
+    <param name="frame_id" value="$(arg frame_id)"/>
+    <param name="resolution" value="$(arg resolution)"/>
+    <rosparam command="load" file="$(arg filename)"/>
+  </node>
+  
+  <node name="rviz" pkg="rviz" type="rviz" 
+        args="-d $(find create_occ_grid)/rviz/create_occ_grid.rviz"/>
+</launch>
